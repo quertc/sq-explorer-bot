@@ -76,7 +76,6 @@ bot.onText(/\/projects|Projects/, async ({ chat: { id } }) => {
     const { keyboard, pagination, text } = getMessageInfo(data, page);
 
     bot.sendMessage(id, text, {
-      parse_mode: 'HTML',
       disable_web_page_preview: true,
       reply_markup: {
         inline_keyboard: [...keyboard, pagination],
@@ -95,7 +94,6 @@ bot.onText(/\/search (.+)/, async ({ chat: { id } }, match) => {
     const { keyboard, pagination, text } = getMessageInfo(data, page, match[1]);
 
     bot.sendMessage(id, text, {
-      parse_mode: 'HTML',
       disable_web_page_preview: true,
       reply_markup: {
         inline_keyboard: [...keyboard, pagination],
@@ -119,7 +117,6 @@ bot.on('callback_query', async ({ message: { message_id: messageId, chat: { id }
       bot.editMessageText(text, {
         chat_id: id,
         message_id: messageId,
-        parse_mode: 'HTML',
         disable_web_page_preview: true,
         reply_markup: {
           inline_keyboard: [...keyboard, pagination],
@@ -136,7 +133,6 @@ bot.on('callback_query', async ({ message: { message_id: messageId, chat: { id }
       bot.editMessageText(text, {
         chat_id: id,
         message_id: messageId,
-        parse_mode: 'HTML',
         disable_web_page_preview: true,
         reply_markup: {
           inline_keyboard: [...keyboard, pagination],
@@ -148,7 +144,19 @@ bot.on('callback_query', async ({ message: { message_id: messageId, chat: { id }
       const response = await fetch(`https://api.subquery.network/subqueries/${parsedData.key}`);
       const projectData = await response.json();
 
-      bot.sendMessage(id, JSON.stringify(projectData, null, 2), menu);
+      bot.sendMessage(id, JSON.stringify(projectData, null, 2), {
+        disable_web_page_preview: true,
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: 'View in SubQuery explorer',
+                url: `https://explorer.subquery.network/subquery/${parsedData.key}`,
+              },
+            ],
+          ],
+        },
+      });
     }
   } catch (e) {
     bot.sendMessage(id, e.message);
